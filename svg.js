@@ -45,4 +45,44 @@ class SVG{
 
     }
 
+    rect(x,y,width,height,rx,ry){
+        const rect = this.createElement('rect');
+        rect.setAttributeNS(null, 'x',x || 0);
+        rect.setAttributeNS(null, 'y', y || 0);
+        rect.setAttributeNS(null, 'width', width || 10);
+        rect.setAttributeNS(null, 'height', height || 10);
+        rect.setAttributeNS(null, 'rx',rx || 0 );
+        rect.setAttributeNS(null, 'ry', ry || 0 );
+        this.appendChild(rect);
+        return rect;
+    }
+
+    circle(cx,cy,r){
+        const circle = this.createElement('circle');
+        circle.setAttributeNS(null, 'cx',cx );
+        circle.setAttributeNS(null, 'cy', cy );
+        circle.setAttributeNS(null, 'r', r);
+        this.appendChild(circle);
+        return circle;
+    }
+
+    line(x1,y1,x2,y2){
+        const line = this.createElement('line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        this.appendChild(line);
+        return line;
+    }
+
+    ellipse(cx,cy,rx,ry){
+        const ellipse = this.createElement('ellipse');
+        ellipse.setAttribute('cx', cx);
+        ellipse.setAttribute('cy', cy);
+        ellipse.setAttribute('rx', rx);
+        ellipse.setAttribute('ry', ry);
+        this.appendChild(ellipse);
+        return ellipse;
+    }
 }
