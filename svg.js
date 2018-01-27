@@ -1,16 +1,56 @@
+
+class NSElementCreator{
+    
+    constructor(elementName){
+        this.elementName = elementName;
+        this.NS = "http://www.w3.org/2000/svg";
+        this.NSElements = ['svg','circle','rect','ellipse','line','path','polygon'];
+        this.element = this.createElement();
+    }
+
+    createElement(){
+        if( this.NSElements.filter((element) => element === this.elementName) )
+            return document.createElementNS(this.NS, this.elementName);
+        else
+            console.error(`Cannot create element ${this.elementName}\n`);
+    }
+
+    setClass(className){
+        this.element.setAttribute('class',className);
+    }
+
+    setAttribute(key,value){
+        this.element.setAttributeNS(null,key || 0 ,value || 0);
+    }
+
+    setAttributes(attrs){
+        for(let attr in attrs)
+            this.element.setAttribute(attr,attrs[attr] || 0);
+    }
+
+    appendChild(childElement){
+        if(childElement && childElement instanceof Node)
+            this.element.appendChild(childElement);
+        else
+            console.log(`Expected a non null child \n Given : ${childElement}`);
+    }
+
+    get getNode(){
+        return this.element;
+    }
+}
+
 class SVG{
 
     constructor(parentID,width,height){
     
         this.parentID = parentID;
-        this.svgNS = "http://www.w3.org/2000/svg";
 
         this.width = width || 200;
         this.height = height || 200;
 
-        this.elements = ['svg','circle','rect','ellipse','line'];
 
-        this.svg = this.createElement('svg');
+        this.svg = new NSElementCreator('svg');
 
         this.parent = document.querySelector(parentID);//could be class or id or tag...
 
@@ -19,70 +59,72 @@ class SVG{
 
     render(){
         if(this.parent){
-            this.svg.setAttributeNS(null,'width',this.width);
-            this.svg.setAttributeNS(null,'height',this.height);
-            this.parent.appendChild(this.svg);
+            this.svg.setAttributes( {'width':this.width,'height':this.height});
+            this.parent.appendChild(this.svg.getNode);
         }else
             console.error(`Id ${this.parentID} Not Found !`);
     }
 
-    createElement(name){
-        if( this.elements.filter((element) => element === name) )
-            return document.createElementNS(this.svgNS, name);
-        else
-            console.error(`cannot create element ${name}\n`);
-    }
-
-    setAttribute(element,key,value){
-        element.setAttributeNS(null,key,value);
-    }
-
-    appendChild(child){
-        if(child && child instanceof Node)
-            this.svg.appendChild(child);
-        else
-            console.log(`Expected a non null child \n Given : ${child}`);
-
+    setClass(className){
+        this.svg.setClass(className);
     }
 
     rect(x,y,width,height,rx,ry){
-        const rect = this.createElement('rect');
-        rect.setAttributeNS(null, 'x',x || 0);
-        rect.setAttributeNS(null, 'y', y || 0);
-        rect.setAttributeNS(null, 'width', width || 10);
-        rect.setAttributeNS(null, 'height', height || 10);
-        rect.setAttributeNS(null, 'rx',rx || 0 );
-        rect.setAttributeNS(null, 'ry', ry || 0 );
-        this.appendChild(rect);
+        const rect = new NSElementCreator('rect');
+        rect.setAttributes({
+            'x' : x,
+            'y' : y,
+            'width' : width,
+            'height' : height,
+            'rx' : rx,
+            'ry' : ry
+        });
+
+        this.svg.appendChild(rect.getNode);
         return rect;
     }
 
     circle(cx,cy,r){
-        const circle = this.createElement('circle');
-        circle.setAttributeNS(null, 'cx',cx );
-        circle.setAttributeNS(null, 'cy', cy );
-        circle.setAttributeNS(null, 'r', r);
-        this.appendChild(circle);
+        const circle = new NSElementCreator('circle');
+        circle.setAttributes({
+            'cx' : cx,
+            'cy' : cy,
+            'r' : r
+        });
+
+        this.svg.appendChild(circle.getNode);
         return circle;
     }
 
     line(x1,y1,x2,y2){
-        const line = this.createElement('line');
-        line.setAttribute('x1', x1);
-        line.setAttribute('y1', y1);
-        line.setAttribute('x2', x2);
-        line.setAttribute('y2', y2);
-        this.appendChild(line);
+        const line = new NSElementCreator('line');
+        line.setAttributes({
+            'x1': x1,
+            'y1': y1,
+            'x2': x2,
+            'y2': y2
+        });
+        this.svg.appendChild(line.getNode);
         return line;
     }
 
     ellipse(cx,cy,rx,ry){
-        const ellipse = this.createElement('ellipse');
-        ellipse.setAttribute('cx', cx);
-        ellipse.setAttribute('cy', cy);
-        ellipse.setAttribute('rx', rx);
-        ellipse.setAttribute('ry', ry);
-        this.appendChild(ellipse);
+        const ellipse = new NSElementCreator('ellipse');
+        ellipse.setAttributes({
+            'cx' : cx,
+            'cy' : cy,
+            'rx' : rx,
+            'ry' : ry
+        });
+
+        this.svg.appendChild(ellipse.getNode);
         return ellipse;
+    }
+
+    path(pathStr){
+        const path = new NSElementCreator('path');
+        path.setAttribute('d', pathStr);
+        this.svg.appendChild(path.getNode);
+        return path;
     }
 }
